@@ -1,24 +1,13 @@
 const initialState = {
-  categories: [
-    {
-      income: [
-        "salary",
-        "help from parents",
-        "initial funds",
-        "selling",
-        "other",
-      ],
-    },
-    {
-      expenses: [
-        "rent",
-        "food",
-        "tickets",
-        "buying somethinh",
-        "medicine",
-        "documents",
-      ],
-    },
+  income: ["salary", "help from parents", "initial funds", "selling", "other"],
+
+  expenses: [
+    "rent",
+    "food",
+    "tickets",
+    "buying something",
+    "medicine",
+    "documents",
   ],
 };
 
@@ -27,10 +16,7 @@ export default function categoriesReducer(state = initialState, action) {
     case "categories/addNewIncomeCategory": {
       return {
         ...state,
-        categories: [
-          ...state.categories,
-          { income: [...state.categories.income, action.payload] },
-        ],
+        income: [...state.income, action.payload],
       };
     }
     default:
