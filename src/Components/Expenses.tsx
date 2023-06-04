@@ -1,16 +1,62 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import {
+  addExpense,
+  calculateTotal,
+  calculateTotalBudget,
+} from "../store/features/budgets/monthsBudgetsSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 // и еще функция для смены валюты с проверкой курса онлайн
 
 function Expenses() {
   const [formAmount, setFormAmount] = useState(0);
-  const categories = useSelector((state) => state.categories.expenses);
-  const month = useSelector((state) =>
-    state.monthsBudget.find((month) => month.active === true)
+  const categories = useAppSelector((state) => state.categories.expenses);
+  const month = useAppSelector((state) =>
+    state.budgets.find((month) => month.active === true)
   );
-  const dispatch = useDispatch();
-  const currency = useSelector((state) => state.currencies.currentCurrency);
+  const dispatch = useAppDispatch();
+  const currency = useAppSelector((state) => state.currency.currentCurrency);
+  const rate = useAppSelector((state) => state.currency.rate);
+
+  function calculateCurrencies(amount) {
+    switch (currency) {
+      case "₽": {
+        return {
+          RUB: amount,
+          USD: amount * rate.USD,
+          EUR: amount * rate.EUR,
+        };
+      }
+      case "$": {
+        return {
+          RUB: amount * (1 / rate.USD),
+          USD: amount,
+          EUR: amount * (1 / rate.USD) * rate.EUR,
+        };
+      }
+      case "€": {
+        return {
+          RUB: amount * (1 / rate.EUR),
+          USD: amount * (1 / rate.EUR) * rate.USD,
+          EUR: amount,
+        };
+      }
+    }
+  }
+
+  function getAmount(expenses) {
+    switch (currency) {
+      case "₽": {
+        return expenses.RUBamount;
+      }
+      case "$": {
+        return expenses.USDamount;
+      }
+      case "€": {
+        return expenses.EURamount;
+      }
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -18,16 +64,24 @@ function Expenses() {
       const form = e.target;
       const formData = new FormData(form);
       const formJson = Object.fromEntries(formData.entries());
-      dispatch({
-        type: "addExpense",
-        payload: {
+      const calculated = calculateCurrencies(formJson.amount);
+      console.log(calculated);
+      dispatch(
+        addExpense({
           month: month.month,
-          amount: formJson.amount,
+          RUBamount: Math.round(calculated.RUB),
+          USDamount: Math.round(calculated.USD),
+          EURamount: Math.round(calculated.EUR),
           category: formJson.category,
           commentary: formJson.commentary,
-        },
-      });
-      dispatch({ type: "calculateTotal", payload: { month: month.month } });
+        })
+      );
+      dispatch(
+        calculateTotal({
+          month: month.month,
+        })
+      );
+      dispatch(calculateTotalBudget({ month: month.month }));
     } else {
       console.log("select month");
     }
@@ -40,7 +94,7 @@ function Expenses() {
           <div key={crypto.randomUUID()} className="flex">
             <span className="w-6">-</span>
             <span className="w-[7.1rem]">
-              {currency} {expenses.amount}
+              {currency} {getAmount(expenses)}
             </span>
             <span className="w-[14.8rem]">{expenses.category}</span>
             <span>{expenses.commentary}</span>

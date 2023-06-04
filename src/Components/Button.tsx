@@ -1,4 +1,10 @@
-function Button({ title, classNames, onSelect }) {
+interface ButtonProps {
+  title: string;
+  classNames?: string;
+  onSelect: () => void;
+}
+
+function Button({ title, classNames, onSelect }: ButtonProps) {
   return (
     <button
       onClick={onSelect}
