@@ -1,7 +1,10 @@
 import React, { useRef } from "react";
-import { select, unselect } from "../store/features/budgets/monthsBudgetsSlice";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import Month from "./Month";
+import {
+  select,
+  unselect,
+} from "../../store/features/budgets/monthsBudgetsSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import DesktopMonth from "./DesktopMonth";
 
 type ForScrolling = Map<number, HTMLElement> | null;
 
@@ -45,7 +48,7 @@ function MonthsTray() {
     <div className="pt-56 pb-32 max-h-full w-1/4 text-white bg-gradient-to-r from-black/20 to-stone-900/50 overflow-y-scroll ">
       {months.map((month, index) => {
         return (
-          <Month
+          <DesktopMonth
             onSelect={selectMonth(index)}
             unSelect={unselectMonth(index)}
             key={crypto.randomUUID()}

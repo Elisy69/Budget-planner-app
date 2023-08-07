@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
-import { monthNames } from "../helpers/months";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { MonthType } from "../types/types";
+import { monthNames } from "../../helpers/months";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { MonthType } from "../../types/types";
 
 interface MonthProps {
   data: MonthType;

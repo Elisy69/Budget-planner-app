@@ -1,14 +1,14 @@
 interface ButtonProps {
   title: string;
   classNames?: string;
-  onSelect: () => void;
+  onClick?: () => void;
 }
 
-function Button({ title, classNames, onSelect }: ButtonProps) {
+function Button({ title, classNames, onClick }: ButtonProps) {
   return (
     <button
-      onClick={onSelect}
-      className={`${classNames} bg-gray-700 rounded-lg mt-4 h-8 px-2 hover:bg-gray-600 active:bg-gray-500 `}
+      onClick={onClick}
+      className="w-20 h-10 text-black text-xs bg-blue-300 rounded-xl hover:bg-blue-400 active:bg-blue-100"
     >
       {title}
     </button>

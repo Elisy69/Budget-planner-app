@@ -1,5 +1,4 @@
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, current, nanoid } from "@reduxjs/toolkit";
 import { MonthType } from "../../../types/types";
 const months: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -24,6 +23,19 @@ const monthsBudgetsSlice = createSlice({
   name: "monthsBudgets",
   initialState,
   reducers: {
+    removeBudgetItem(state, action) {
+      const { monthIndex, budgetType, id } = action.payload;
+      const updatedBudgetType = state[monthIndex][budgetType].filter(
+        (item) => item.id !== id
+      );
+      const updatedMonth = {
+        ...state[monthIndex],
+        [budgetType]: updatedBudgetType,
+      };
+      const updatedState = [...state];
+      updatedState[monthIndex] = updatedMonth;
+      return updatedState;
+    },
     addIncome(state, action) {
       const monthIndex = action.payload.month - 1;
       const updatedMonth = {
@@ -31,6 +43,7 @@ const monthsBudgetsSlice = createSlice({
         income: [
           ...state[monthIndex].income,
           {
+            id: nanoid(),
             RUBamount: action.payload.RUBamount,
             USDamount: action.payload.USDamount,
             EURamount: action.payload.EURamount,
@@ -50,6 +63,7 @@ const monthsBudgetsSlice = createSlice({
         expenses: [
           ...state[monthIndex].expenses,
           {
+            id: nanoid(),
             RUBamount: action.payload.RUBamount,
             USDamount: action.payload.USDamount,
             EURamount: action.payload.EURamount,
@@ -62,7 +76,7 @@ const monthsBudgetsSlice = createSlice({
       updatedState[monthIndex] = updatedMonth;
       return updatedState;
     },
-    calculateTotal(state, action) {
+    calculateAccounts(state, action) {
       const monthIndex = action.payload.month - 1;
       const monthIncome = state[monthIndex].income;
       const monthExpenses = state[monthIndex].expenses;
@@ -95,7 +109,7 @@ const monthsBudgetsSlice = createSlice({
       updatedState[monthIndex] = updatedMonth;
       return updatedState;
     },
-    calculateTotalBudget(state, action) {
+    calculateTotalRevenue(state, action) {
       const monthIndex = action.payload.month - 1;
       const income = state[monthIndex].total.income;
       const expenses = state[monthIndex].total.expenses;
@@ -144,10 +158,11 @@ const monthsBudgetsSlice = createSlice({
 });
 
 export const {
+  removeBudgetItem,
   addIncome,
   addExpense,
-  calculateTotal,
-  calculateTotalBudget,
+  calculateAccounts,
+  calculateTotalRevenue,
   select,
   unselect,
 } = monthsBudgetsSlice.actions;

@@ -1,24 +1,51 @@
-import React from "react";
-import Expenses from "./Components/Expenses";
-import Income from "./Components/Income";
-import MonthsTray from "./Components/MonthsTray";
+import { useEffect, useState } from "react";
+import {
+  default as BudgetSheet,
+  default as Income,
+} from "./Components/BudgetSheet";
+import DesktopMonthsContainer from "./Components/MonthContainer/DesktopMonthsContainer";
+import MobileMonthsContainer from "./Components/MonthContainer/MobileMonthsContainer";
 import Navbar from "./Components/Navbar";
+import { useAppSelector } from "./store/hooks";
+
+const verticalLine = (
+  <div className="flex-col">
+    <div className="h-20"></div>
+    <div className="border-r border-gray-600 h-4/5"></div>
+    <div className="h-16"></div>
+  </div>
+);
 
 function App() {
+  const [isMobile, setIsMobile] = useState<Boolean>(window.innerWidth < 768);
+  const checkScreenSize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
+  const month = useAppSelector((state) =>
+    state.budgets.find((month) => month.active === true)
+  );
+
+  useEffect(() => {
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  });
+
   return (
-    <div className="realative rounded-2xl self-center border border-slate-700 shadow-2xl drop-shadow-2xl flex font-mono lg:max-w-[65rem] lg:max-h-[45rem]">
-      <MonthsTray />
-      <div className="flex-col">
-        <div className="h-20"></div>
-        <div className="border-r border-gray-600 h-4/5"></div>
-        <div className="h-16"></div>
-      </div>
-      <div className="w-3/4 flex-col pl-6 pr-2 py-2">
-        <Navbar />
-        <div className="w-full h-[39rem]">
-          <Income />
-          <Expenses />
-        </div>
+    <div className="w-full flex flex-col font-mono overflow-scroll bg-black">
+      <Navbar />
+      <div className="flex flex-col lg:flex-row">
+        {isMobile ? <MobileMonthsContainer /> : <DesktopMonthsContainer />}
+        {month ? (
+          <div className="flex flex-col place-content-center px-4">
+            <BudgetSheet isIncome={true} />
+            <BudgetSheet isIncome={false} />
+          </div>
+        ) : (
+          <div className="text-[5rem] text-center w-full mt-10">
+            <div className="animate-bounce">👆</div>
+            <div>Select Month!</div>
+          </div>
+        )}
       </div>
     </div>
   );
