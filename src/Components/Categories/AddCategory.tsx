@@ -15,7 +15,6 @@ function AddCategpryForm({ isIncome }: AddCategpryFormProps) {
 
   function handleAddCategory(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    console.log(newCategory);
     isIncome
       ? dispatch(addNewIncomeCategory(newCategory))
       : dispatch(addNewExpensesCategory(newCategory));

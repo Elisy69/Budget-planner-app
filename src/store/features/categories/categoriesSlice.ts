@@ -1,41 +1,37 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
-
-const myIncome = [
-  "salary",
-  "help from parents",
-  "initial funds",
-  "selling",
-  "other",
-];
-const myExpenses = [
-  "rent",
-  "food",
-  "tickets",
-  "buying something",
-  "medicine",
-  "documents",
-];
-
-const income = myIncome.map((item) => ({ title: item, id: nanoid() }));
-const expenses = myExpenses.map((item) => ({ title: item, id: nanoid() }));
-
-type CategoryItem = {
+import { getNetIncome } from "../../../helpers/getNetIncome";
+import { Total } from "../../../types/types";
+export interface CategoryItem {
   title: string;
   id: string;
-};
+}
 interface Categories {
   income: CategoryItem[];
   expenses: CategoryItem[];
+  netIncome: number | Total;
 }
+
+const myIncome: string[] = [];
+const myExpenses: string[] = [];
+
+const income: CategoryItem[] = myIncome.map((item) => ({
+  title: item,
+  id: nanoid(),
+}));
+const expenses: CategoryItem[] = myExpenses.map((item) => ({
+  title: item,
+  id: nanoid(),
+}));
 
 const initialState: Categories = {
   income: income,
   expenses: expenses,
+  netIncome: 0,
 };
 
 const categoriesSlice = createSlice({
   name: "categories",
-  initialState,
+  initialState: initialState,
   reducers: {
     addNewIncomeCategory(state, action) {
       return {
@@ -84,6 +80,12 @@ const categoriesSlice = createSlice({
             ),
           };
     },
+    updateNetIncome(state, action) {
+      return {
+        ...state,
+        netIncome: getNetIncome(action.payload.months),
+      };
+    },
   },
 });
 
@@ -93,5 +95,6 @@ export const {
   onChangeIncomeCategories,
   onChangeExpensesCategories,
   deleteCategory,
+  updateNetIncome,
 } = categoriesSlice.actions;
 export default categoriesSlice.reducer;

@@ -12,6 +12,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import { apiSlice } from "../api/currenciesApi";
 
+import budgetGoalsReducer from "./features/budgetGoals/budgetGoalsSlice";
 import monthsBudgetReducer from "./features/budgets/monthsBudgetsSlice";
 import categoriesReducer from "./features/categories/categoriesSlice";
 import currencyReducer from "./features/currencies/currenciesSlice";
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   budgets: monthsBudgetReducer,
   categories: categoriesReducer,
   currency: currencyReducer,
+  budgetGoals: budgetGoalsReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
@@ -43,5 +45,5 @@ const store = configureStore({
 export const persistor = persistStore(store);
 export default store;
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;

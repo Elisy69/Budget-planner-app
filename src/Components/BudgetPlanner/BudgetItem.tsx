@@ -1,29 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getCategoryNameById } from "../../helpers/getCategoryNameById";
 import {
   calculateAccounts,
   calculateTotalRevenue,
   removeBudgetItem,
-} from "../store/features/budgets/monthsBudgetsSlice";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+} from "../../store/features/budgets/monthsBudgetsSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 type BudgetItem = {
   RUBamount: Number;
   USDamount: Number;
   EURamount: Number;
-  category: String;
-  commentary: String;
+  categoryId: string;
+  commentary: string;
 };
 
 interface BudgetItemProps {
   item: {
-    id: String;
+    id: string;
     RUBamount: Number;
     USDamount: Number;
     EURamount: Number;
-    category: String;
-    commentary: String;
+    categoryId: string;
+    commentary: string;
   };
-  isIncome: Boolean;
+  isIncome: boolean;
 }
 
 function BudgetItem({ item, isIncome }: BudgetItemProps) {
@@ -70,16 +71,22 @@ function BudgetItem({ item, isIncome }: BudgetItemProps) {
   return (
     <div
       key={crypto.randomUUID()}
-      className="relative flex rounded-lg hover:outline hover:outline-1 hover:outline-offset-4 group"
+      className={`group ${
+        isIncome
+          ? `hover:bg-[#80ff7235] hover:shadow-[#80ff7235]hover:shadow-sm`
+          : `hover:bg-[#ff00002e] hover:shadow-[#ff00002e] hover:shadow-sm`
+      } relative flex rounded-xl 0 py-2`}
     >
-      <span className="w-2/6">
+      <span className="w-5/12">
         <span className="">+ </span>
         <span className="">
           {currency} {getAmount(item)}
         </span>
       </span>
 
-      <span className="w-1/6 text-xs sm:text-base">{item.category}</span>
+      <span className="w-3/12 text-xs sm:text-base">
+        {getCategoryNameById(item.categoryId, isIncome)}
+      </span>
 
       <div
         onClick={() => {
@@ -87,7 +94,7 @@ function BudgetItem({ item, isIncome }: BudgetItemProps) {
         }}
         className={`${
           isCommExpanded ? `` : `line-clamp-3 text-ellipsis`
-        } w-3/6 pl-4 pr-2 text-[0.7rem] hover:cursor-pointer`}
+        } w-4/12 pl-4 pr-2 text-[0.7rem] hover:cursor-pointer`}
       >
         {item.commentary}
       </div>
@@ -95,7 +102,7 @@ function BudgetItem({ item, isIncome }: BudgetItemProps) {
         onClick={() => {
           handleDeleteItem();
         }}
-        className="absolute group-hover:block hidden rounded-full border hover:bg-red-400 border-red-900 bg-red-700 text-white top-[-20%] left-[98%] w-4 h-4 leading-3 text-xs"
+        className="absolute group-hover:block hidden rounded-full border hover:bg-red-400 border-red-900 bg-red-700 text-white top-[-13%] left-[98%] w-4 h-4 leading-3 text-xs"
       >
         ✖
       </button>

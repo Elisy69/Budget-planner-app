@@ -1,12 +1,12 @@
-interface BudgetItems {
+export interface BudgetItem {
   RUBamount: number;
   USDamount: number;
   EURamount: number;
-  category: string;
+  categoryId: string;
   commentary: string;
 }
 
-interface Total {
+export interface Total {
   RUB: number;
   USD: number;
   EUR: number;
@@ -14,8 +14,8 @@ interface Total {
 
 export interface MonthType {
   month: number;
-  income: BudgetItems[];
-  expenses: BudgetItems[];
+  income: BudgetItem[];
+  expenses: BudgetItem[];
   active: Boolean;
   total:
     | number

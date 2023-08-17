@@ -1,4 +1,9 @@
 import { useDispatch } from "react-redux";
+import {
+  calculateAccounts,
+  calculateTotalRevenue,
+  removeBudgetItemsBasedOnCategory,
+} from "../../store/features/budgets/monthsBudgetsSlice";
 import { deleteCategory } from "../../store/features/categories/categoriesSlice";
 
 interface Item {
@@ -21,6 +26,14 @@ function CategoriesList({ item, onChange, isIncome }: CategoriesListPorps) {
 
   function deleteItem() {
     dispatch(deleteCategory({ isIncome: isIncome, id: item.id }));
+    dispatch(
+      removeBudgetItemsBasedOnCategory({ isIncome: isIncome, id: item.id })
+    );
+    // not quite efficient, need to add condition (which months changed based on category) for recalculation
+    for (let i = 1; i <= 12; i++) {
+      dispatch(calculateAccounts({ month: i }));
+      dispatch(calculateTotalRevenue({ month: i }));
+    }
   }
 
   return (

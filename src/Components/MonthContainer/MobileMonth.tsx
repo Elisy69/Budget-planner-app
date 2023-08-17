@@ -36,7 +36,7 @@ function MobileMonth({ data, isActive, onSelect, unSelect }: MonthProps) {
       onClick={isActive ? unSelect : onSelect}
       className={`${getColor(data.total)} ${
         isActive ? `` : `badge-outline`
-      } badge cursor-pointer h-[1.5rem]`}
+      } badge cursor-pointer border-2 h-[1.5rem] md:h-[2rem] md:text-lg lg:h-[3rem] lg:text-xl lg:border-4 `}
     >
       {monthNames[data.month - 1]}: {getCurrencyData(data.total, "totalMonth")}
     </div>

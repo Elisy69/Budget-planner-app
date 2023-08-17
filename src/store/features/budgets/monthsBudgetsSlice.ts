@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice, current, nanoid } from "@reduxjs/toolkit";
+import { getDecimalFixedNumber } from "../../../helpers/toFixed";
 import { MonthType } from "../../../types/types";
 const months: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -36,8 +37,23 @@ const monthsBudgetsSlice = createSlice({
       updatedState[monthIndex] = updatedMonth;
       return updatedState;
     },
+    removeBudgetItemsBasedOnCategory(state, action) {
+      const { isIncome, id } = action.payload;
+      const budgetType = isIncome ? "income" : "expenses";
+      const updatedBudgets = state.map((month) => {
+        return {
+          ...month,
+          [budgetType]: month[budgetType].filter(
+            (item) => item.categoryId !== id
+          ),
+        };
+      });
+      return updatedBudgets;
+    },
     addIncome(state, action) {
       const monthIndex = action.payload.month - 1;
+      console.log(action.payload.categoryId);
+
       const updatedMonth = {
         ...state[monthIndex],
         income: [
@@ -47,7 +63,7 @@ const monthsBudgetsSlice = createSlice({
             RUBamount: action.payload.RUBamount,
             USDamount: action.payload.USDamount,
             EURamount: action.payload.EURamount,
-            category: action.payload.category,
+            categoryId: action.payload.categoryId,
             commentary: action.payload.commentary,
           },
         ],
@@ -67,7 +83,7 @@ const monthsBudgetsSlice = createSlice({
             RUBamount: action.payload.RUBamount,
             USDamount: action.payload.USDamount,
             EURamount: action.payload.EURamount,
-            category: action.payload.category,
+            categoryId: action.payload.categoryId,
             commentary: action.payload.commentary,
           },
         ],
@@ -115,9 +131,9 @@ const monthsBudgetsSlice = createSlice({
       const expenses = state[monthIndex].total.expenses;
 
       const totalMonth = {
-        RUB: income.RUB - expenses.RUB,
-        USD: income.USD - expenses.USD,
-        EUR: income.EUR - expenses.EUR,
+        RUB: getDecimalFixedNumber(income.RUB - expenses.RUB),
+        USD: getDecimalFixedNumber(income.USD - expenses.USD),
+        EUR: getDecimalFixedNumber(income.EUR - expenses.EUR),
       };
 
       const updatedMonth = {
@@ -159,6 +175,7 @@ const monthsBudgetsSlice = createSlice({
 
 export const {
   removeBudgetItem,
+  removeBudgetItemsBasedOnCategory,
   addIncome,
   addExpense,
   calculateAccounts,

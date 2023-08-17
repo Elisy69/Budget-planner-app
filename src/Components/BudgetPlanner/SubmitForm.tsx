@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react";
+import { calculateCurrencies } from "../../helpers/calculateCurrencies";
+import { getDecimalFixedNumber } from "../../helpers/toFixed";
 import {
   addExpense,
   addIncome,
   calculateAccounts,
   calculateTotalRevenue,
-} from "../store/features/budgets/monthsBudgetsSlice";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+} from "../../store/features/budgets/monthsBudgetsSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import AddButton from "./ADDbutton";
 
 interface FormProps {
   isIncome: Boolean;
 }
 
+function getCategoryIdByName(categoryName, categoryData) {
+  const categoryObj = categoryData.find((item) => categoryName === item.title);
+  return categoryObj?.id;
+}
+
 function SubmitForm({ isIncome }: FormProps) {
   const [formAmount, setFormAmount] = useState("0");
+  const currency = useAppSelector((state) => state.currency.currentCurrency);
+  const rate = useAppSelector((state) => state.currency.rate);
   const incomeCategories = useAppSelector((state) => state.categories.income);
   const expensesCategories = useAppSelector(
     (state) => state.categories.expenses
@@ -22,38 +31,10 @@ function SubmitForm({ isIncome }: FormProps) {
     state.budgets.find((month) => month.active === true)
   );
   const dispatch = useAppDispatch();
-  const currency = useAppSelector((state) => state.currency.currentCurrency);
-  const rate = useAppSelector((state) => state.currency.rate);
 
   useEffect(() => {
     setFormAmount("0");
   }, [month]);
-
-  function calculateCurrencies(amount) {
-    switch (currency) {
-      case "₽": {
-        return {
-          RUB: amount,
-          USD: amount * rate.USD,
-          EUR: amount * rate.EUR,
-        };
-      }
-      case "$": {
-        return {
-          RUB: amount * (1 / rate.USD),
-          USD: amount,
-          EUR: amount * (1 / rate.USD) * rate.EUR,
-        };
-      }
-      case "€": {
-        return {
-          RUB: amount * (1 / rate.EUR),
-          USD: amount * (1 / rate.EUR) * rate.USD,
-          EUR: amount,
-        };
-      }
-    }
-  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -61,26 +42,31 @@ function SubmitForm({ isIncome }: FormProps) {
       const form = e.target;
       const formData = new FormData(form);
       const formJson = Object.fromEntries(formData.entries());
-      const calculated = calculateCurrencies(formJson.amount);
-
+      const calculated = calculateCurrencies(formJson.amount, currency, rate);
       isIncome
         ? dispatch(
             addIncome({
               month: month.month,
-              RUBamount: Math.round(calculated.RUB),
-              USDamount: Math.round(calculated.USD),
-              EURamount: Math.round(calculated.EUR),
-              category: formJson.category,
+              RUBamount: getDecimalFixedNumber(calculated.RUB),
+              USDamount: getDecimalFixedNumber(calculated.USD),
+              EURamount: getDecimalFixedNumber(calculated.EUR),
+              categoryId: getCategoryIdByName(
+                formJson.category,
+                incomeCategories
+              ),
               commentary: formJson.commentary,
             })
           )
         : dispatch(
             addExpense({
               month: month.month,
-              RUBamount: Math.round(calculated.RUB),
-              USDamount: Math.round(calculated.USD),
-              EURamount: Math.round(calculated.EUR),
-              category: formJson.category,
+              RUBamount: getDecimalFixedNumber(calculated.RUB),
+              USDamount: getDecimalFixedNumber(calculated.USD),
+              EURamount: getDecimalFixedNumber(calculated.EUR),
+              categoryId: getCategoryIdByName(
+                formJson.category,
+                expensesCategories
+              ),
               commentary: formJson.commentary,
             })
           );
@@ -105,7 +91,7 @@ function SubmitForm({ isIncome }: FormProps) {
     >
       <div className="flex flex-row border border-gray-600 rounded-md w-full">
         <input
-          className="bg-transparent focus:outline-0 w-2/6 pl-5"
+          className="bg-transparent focus:outline-0 w-5/12 pl-5"
           name="amount"
           type="number"
           value={formAmount}
@@ -117,7 +103,7 @@ function SubmitForm({ isIncome }: FormProps) {
           }}
         />
         <select
-          className="bg-transparent focus:outline-0 text-xs w-1/6"
+          className="bg-transparent focus:outline-0 text-xs w-3/12"
           name="category"
         >
           {isIncome
@@ -137,7 +123,7 @@ function SubmitForm({ isIncome }: FormProps) {
               })}
         </select>
         <textarea
-          className="textarea textarea-ghost focus:bg-transparent focus:outline-0 w-3/6 resize-y max-h-[3rem]"
+          className="textarea text-xs lg:text-base textarea-ghost focus:bg-transparent focus:outline-0 w-4/12 resize-y max-h-[3rem]"
           placeholder="Add commentary..."
           name="commentary"
         ></textarea>

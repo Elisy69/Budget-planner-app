@@ -1,52 +1,31 @@
-import { useEffect, useState } from "react";
-import {
-  default as BudgetSheet,
-  default as Income,
-} from "./Components/BudgetSheet";
-import DesktopMonthsContainer from "./Components/MonthContainer/DesktopMonthsContainer";
-import MobileMonthsContainer from "./Components/MonthContainer/MobileMonthsContainer";
-import Navbar from "./Components/Navbar";
-import { useAppSelector } from "./store/hooks";
-
-const verticalLine = (
-  <div className="flex-col">
-    <div className="h-20"></div>
-    <div className="border-r border-gray-600 h-4/5"></div>
-    <div className="h-16"></div>
-  </div>
-);
+import { useEffect } from "react";
+import { Route, Routes } from "react-router";
+import Navbar from "./Components/Navbar/Navbar";
+import { useGetRatesQuery } from "./api/currenciesApi";
+import BudgetAnalysis from "./pages/BudgetAnalysis";
+import BudgetGoals from "./pages/BudgetGoals";
+import BudgetPlanner from "./pages/BudgetPlanner";
+import { loadRates } from "./store/features/currencies/currenciesSlice";
+import { useAppDispatch } from "./store/hooks";
 
 function App() {
-  const [isMobile, setIsMobile] = useState<Boolean>(window.innerWidth < 768);
-  const checkScreenSize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-  const month = useAppSelector((state) =>
-    state.budgets.find((month) => month.active === true)
-  );
+  const { data } = useGetRatesQuery();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
-  });
+    if (data?.data) {
+      dispatch(loadRates({ USD: data.data.USD, EUR: data.data.EUR }));
+    }
+  }, [data, dispatch]);
 
   return (
     <div className="w-full flex flex-col font-mono overflow-scroll bg-black">
       <Navbar />
-      <div className="flex flex-col lg:flex-row">
-        {isMobile ? <MobileMonthsContainer /> : <DesktopMonthsContainer />}
-        {month ? (
-          <div className="flex flex-col place-content-center px-4">
-            <BudgetSheet isIncome={true} />
-            <BudgetSheet isIncome={false} />
-          </div>
-        ) : (
-          <div className="text-[5rem] text-center w-full mt-10">
-            <div className="animate-bounce">👆</div>
-            <div>Select Month!</div>
-          </div>
-        )}
-      </div>
+      <Routes>
+        <Route path="/" element={<BudgetPlanner />} />
+        <Route path="/analysis" element={<BudgetAnalysis />} />
+        <Route path="/goals" element={<BudgetGoals />} />
+      </Routes>
     </div>
   );
 }
