@@ -1,14 +1,17 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { BudgetItem, MonthType } from "../../../types/types";
+import { MonthType } from "./features/budgets/monthsBudgetsSlice";
+
+type Type = "income" | "expenses";
 
 export const selectBudgetItemsWithCategory = createSelector(
-  [(state) => state.budgets, (state, type) => type],
-  (budgets, type) => {
+  [(state) => state.budgets, (state, type: Type) => type],
+  (budgets: MonthType[], type) => {
+    console.log(budgets, type);
     return budgets
-      .filter((month: MonthType) => month[type].length !== 0)
-      .map((item: BudgetItem) => ({ [type]: item[type] }))
-      .flatMap((item: BudgetItem) => item[type])
-      .map((item: BudgetItem) => ({
+      .filter((month) => month[type].length !== 0)
+      .map((item) => ({ [type]: item[type] }))
+      .flatMap((item) => item[type])
+      .map((item) => ({
         EUR: item.EURamount,
         RUB: item.RUBamount,
         USD: item.USDamount,

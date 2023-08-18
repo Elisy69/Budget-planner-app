@@ -1,10 +1,10 @@
 import { nanoid } from "@reduxjs/toolkit";
+import { MonthType } from "../../store/features/budgets/monthsBudgetsSlice";
 import { useAppSelector } from "../../store/hooks";
 import BudgetItem from "./BudgetItem";
 import SubmitForm from "./SubmitForm";
-
 interface BudgetSheetProps {
-  isIncome: Boolean;
+  isIncome: boolean;
 }
 
 function BudgetSheet({ isIncome }: BudgetSheetProps) {
@@ -16,7 +16,7 @@ function BudgetSheet({ isIncome }: BudgetSheetProps) {
     state.budgets.find((month) => month.active === true)
   );
 
-  function renderIncome(month) {
+  function renderIncome(month: MonthType | undefined) {
     if (month !== undefined && incomeCategories.length !== 0) {
       return month.income.map((income) => {
         return <BudgetItem key={nanoid()} item={income} isIncome={isIncome} />;
@@ -25,7 +25,7 @@ function BudgetSheet({ isIncome }: BudgetSheetProps) {
       console.log("wainting for month to be selected...");
     }
   }
-  function renderExpenses(month) {
+  function renderExpenses(month: MonthType | undefined) {
     if (month !== undefined && expensesCategories.length !== 0) {
       return month.expenses.map((expenses) => {
         return (

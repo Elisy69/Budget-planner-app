@@ -1,7 +1,6 @@
-import { useEffect } from "react";
 import { getCategoryNameById } from "../../helpers/getCategoryNameById";
+import { getCategoryTotalBasedOnCurrency } from "../../helpers/getTotalBasedOnCurrency";
 import { useAppSelector } from "../../store/hooks";
-import { getCategoryTotalBasedOnCurrency } from "/src/helpers/getTotalBasedOnCurrency.ts";
 
 type Total = {
   RUB: number;
@@ -12,7 +11,7 @@ type Total = {
 interface CategoryItemProps {
   total: Total;
   id: string;
-  share?: string;
+  share?: number;
   isIncome: boolean;
 }
 

@@ -1,14 +1,14 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 import { getNetIncome } from "../../../helpers/getNetIncome";
-import { Total } from "../../../types/types";
+import { Total } from "../budgets/monthsBudgetsSlice";
 export interface CategoryItem {
   title: string;
   id: string;
 }
-interface Categories {
+export interface Categories {
   income: CategoryItem[];
   expenses: CategoryItem[];
-  netIncome: number | Total;
+  netIncome: Total;
 }
 
 const myIncome: string[] = [];
@@ -26,7 +26,7 @@ const expenses: CategoryItem[] = myExpenses.map((item) => ({
 const initialState: Categories = {
   income: income,
   expenses: expenses,
-  netIncome: 0,
+  netIncome: { RUB: 0, USD: 0, EUR: 0 },
 };
 
 const categoriesSlice = createSlice({

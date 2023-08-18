@@ -20,8 +20,12 @@ function Navbar() {
       <span className="text-yellow-300 text-3xl sm:mr-[0.7rem] mr-[0rem] sm:text-4xl md:text-5xl lg:text-6xl">
         {currency}
       </span>
-      <Button onClick={nextCurrency} title={"Change currency"} />
-      <Button title={"Add Categories"} onClick={handleModal}></Button>
+      <Button onClick={nextCurrency} title={"Change currency"} link={"#"} />
+      <Button
+        title={"Add Categories"}
+        onClick={handleModal}
+        link={"#"}
+      ></Button>
       <Button title={"Budget Planner"} link={"/"} />
       <Button title={"Budget Analysis"} link={"/analysis"} />
       <Button title={"Budget Goals"} link={"/goals"} />

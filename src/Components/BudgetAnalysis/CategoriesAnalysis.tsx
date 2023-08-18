@@ -1,12 +1,19 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { BudgetItem } from "../../../types/types";
 import {
   selectBudgetCategories,
   selectBudgetItemsWithCategory,
 } from "../../store/selectors";
 import CategoryItem from "./CategoryItem";
+
+export interface FilteredBudgetItem {
+  RUB: number;
+  USD: number;
+  EUR: number;
+  categoryId: string;
+  commentary: string;
+}
 
 interface CategoriesAnalysisProps {
   type: string;
@@ -31,7 +38,7 @@ interface filteredTotalByCategory {
 interface Category {
   total: Total;
   categoryId: string;
-  share?: string;
+  share?: number;
 }
 
 interface AnalysedData {
@@ -56,7 +63,7 @@ function sortAndAddShareValue(
     .sort((a, b) => b.total.RUB - a.total.RUB);
 }
 
-function analyseData(data: BudgetItem[], categories: CategoryItem[]) {
+function analyseData(data: FilteredBudgetItem[], categories: CategoryItem[]) {
   const filteredTotalByCategoryId = categories
     .map((category) => {
       return {
@@ -105,6 +112,7 @@ function CategoriesAnalysis({ type, isIncome }: CategoriesAnalysisProps) {
   const selectedCategories = useSelector((state) =>
     selectBudgetCategories(state, type)
   );
+
   const budgetItemsFiltered = useSelector((state) =>
     selectBudgetItemsWithCategory(state, type)
   );

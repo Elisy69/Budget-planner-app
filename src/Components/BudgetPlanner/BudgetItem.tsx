@@ -1,29 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getCategoryNameById } from "../../helpers/getCategoryNameById";
+import { getCategoryTotalBasedOnCurrency } from "../../helpers/getTotalBasedOnCurrency";
 import {
+  BudgetItemType,
   calculateAccounts,
   calculateTotalRevenue,
   removeBudgetItem,
 } from "../../store/features/budgets/monthsBudgetsSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
-type BudgetItem = {
-  RUBamount: Number;
-  USDamount: Number;
-  EURamount: Number;
-  categoryId: string;
-  commentary: string;
-};
-
 interface BudgetItemProps {
-  item: {
-    id: string;
-    RUBamount: Number;
-    USDamount: Number;
-    EURamount: Number;
-    categoryId: string;
-    commentary: string;
-  };
+  item: BudgetItemType;
   isIncome: boolean;
 }
 
@@ -34,38 +21,27 @@ function BudgetItem({ item, isIncome }: BudgetItemProps) {
   );
   const [isCommExpanded, setCommExpanded] = useState(false);
   const dispatch = useAppDispatch();
-  function getAmount(item: BudgetItem) {
-    switch (currency) {
-      case "₽": {
-        return item.RUBamount;
-      }
-      case "$": {
-        return item.USDamount;
-      }
-      case "€": {
-        return item.EURamount;
-      }
-    }
-  }
 
   function handleCommExpansion() {
     setCommExpanded(!isCommExpanded);
   }
   function handleDeleteItem() {
-    dispatch(
-      removeBudgetItem({
-        monthIndex: month.month - 1,
-        budgetType: isIncome ? "income" : "expenses",
-        id: item.id,
-      })
-    );
+    if (month) {
+      dispatch(
+        removeBudgetItem({
+          monthIndex: month.month - 1,
+          budgetType: isIncome ? "income" : "expenses",
+          id: item.id,
+        })
+      );
 
-    dispatch(
-      calculateAccounts({
-        month: month.month,
-      })
-    );
-    dispatch(calculateTotalRevenue({ month: month.month }));
+      dispatch(
+        calculateAccounts({
+          month: month.month,
+        })
+      );
+      dispatch(calculateTotalRevenue({ month: month.month }));
+    }
   }
 
   return (
@@ -80,7 +56,11 @@ function BudgetItem({ item, isIncome }: BudgetItemProps) {
       <span className="w-5/12">
         <span className="">+ </span>
         <span className="">
-          {currency} {getAmount(item)}
+          {currency}{" "}
+          {getCategoryTotalBasedOnCurrency(
+            { RUB: item.RUBamount, EUR: item.EURamount, USD: item.USDamount },
+            currency
+          )}
         </span>
       </span>
 

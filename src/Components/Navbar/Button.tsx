@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 interface ButtonProps {
   title: string;
-  onClick?: (e) => void;
-  link?: string;
+  onClick?: () => void;
+  link: string;
 }
 
 function Button({ title, onClick, link }: ButtonProps) {

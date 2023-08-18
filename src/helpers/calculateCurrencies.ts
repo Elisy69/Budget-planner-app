@@ -1,9 +1,9 @@
+import { Currencies } from "../store/features/currencies/currenciesSlice";
+
 type Rate = {
   USD: number;
   EUR: number;
 };
-
-type Currencies = "₽" | "$" | "€";
 
 export function calculateCurrencies(
   amount: number,

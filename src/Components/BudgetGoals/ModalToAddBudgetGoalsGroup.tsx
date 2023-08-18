@@ -3,65 +3,70 @@ import { forwardRef, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { calculateCurrencies } from "../../helpers/calculateCurrencies";
 import { addGoalsGroup } from "../../store/features/budgetGoals/budgetGoalsSlice";
+import { Total } from "../../store/features/budgets/monthsBudgetsSlice";
 import { useAppSelector } from "../../store/hooks";
 import GroupItem from "./GroupItem";
 
-type GoalGroup = {
-  id: string;
-  title: string;
+type Goal = {
   amount: Total;
+  title: string;
 };
 
-const ModalToAddBudgetGoalsGroup = forwardRef(
+const ModalToAddBudgetGoalsGroup = forwardRef<HTMLDialogElement>(
   function ModalToAddBudgetGoalsGroup(props, ref) {
     const currency = useAppSelector((state) => state.currency.currentCurrency);
     const rate = useAppSelector((state) => state.currency.rate);
     const [goalName, setGoalName] = useState("");
-    const [goalAmount, setGoalAmount] = useState(0);
-    const [newGoalsGroup, setNewGoalsGroup] = useState([]);
+    const [goalAmount, setGoalAmount] = useState("0");
+    const [newGoalsGroup, setNewGoalsGroup] = useState<Goal[]>([]);
     const dispatch = useDispatch();
 
     useEffect(() => {
       setGoalName("");
-      setGoalAmount(0);
+      setGoalAmount("0");
     }, [newGoalsGroup]);
 
-    function handleAddBudgetGoal(e) {
+    function handleAddBudgetGoal(e: React.FormEvent<HTMLButtonElement>) {
       e.preventDefault();
-      if (goalName === "" || goalAmount === 0) return;
+      if (goalName === "" || goalAmount === "0") return;
+      console.log(newGoalsGroup);
+
       const updatedGroup = [
         ...newGoalsGroup,
         {
           title: goalName,
-          amount: calculateCurrencies(goalAmount, currency, rate),
+          amount: calculateCurrencies(Number(goalAmount), currency, rate),
         },
       ];
+      console.log(updatedGroup);
+
       setNewGoalsGroup(updatedGroup);
     }
 
     function handleTextInput() {
-      return (e) => {
-        setGoalName(e.target.value);
+      return (e: React.FormEvent<HTMLInputElement>) => {
+        setGoalName(e.currentTarget.value);
       };
     }
 
     function handleAmountInput() {
-      return (e) => {
-        setGoalAmount(Number(e.target.value));
+      return (e: React.FormEvent<HTMLInputElement>) => {
+        setGoalAmount(e.currentTarget.value);
       };
     }
 
     function handleAmountInputClick() {
       return () => {
-        goalAmount === 0 ? setGoalAmount("") : "";
+        goalAmount === "0" ? setGoalAmount("") : "";
       };
     }
     function addBudgetGroupToStore() {
       return () => {
+        if (newGoalsGroup.length === 0) return;
         dispatch(addGoalsGroup({ newGoalsGroup }));
         setNewGoalsGroup([]);
         setGoalName("");
-        setGoalAmount(0);
+        setGoalAmount("0");
       };
     }
 
@@ -69,7 +74,7 @@ const ModalToAddBudgetGoalsGroup = forwardRef(
       return () => {
         setNewGoalsGroup([]);
         setGoalName("");
-        setGoalAmount(0);
+        setGoalAmount("0");
       };
     }
 
@@ -79,7 +84,7 @@ const ModalToAddBudgetGoalsGroup = forwardRef(
           <h3 className="font-bold text-lg">Add new budget goals group</h3>
           <div className="w-full flex flex-col">
             <div className="flex flex-col w-full justify-between px-4 gap-2 mt-2">
-              {newGoalsGroup.map((item: GoalGroup, index) => (
+              {newGoalsGroup.map((item: Goal, index) => (
                 <GroupItem
                   index={index}
                   title={item.title}
@@ -116,7 +121,7 @@ const ModalToAddBudgetGoalsGroup = forwardRef(
           </div>
           <div className="modal-action">
             <button
-              onClick={handleModalClose()}
+              onClick={handleModalClose}
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-base"
             >
               ✕

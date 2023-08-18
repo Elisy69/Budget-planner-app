@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-
+import { getCategoryTotalBasedOnCurrency } from "../../helpers/getTotalBasedOnCurrency";
 import { updateNetIncome } from "../../store/features/categories/categoriesSlice";
 import { useAppSelector } from "../../store/hooks";
-import { getCategoryTotalBasedOnCurrency } from "/src/helpers/getTotalBasedOnCurrency.ts";
 
 function NetIncome() {
   const currency = useAppSelector((state) => state.currency.currentCurrency);

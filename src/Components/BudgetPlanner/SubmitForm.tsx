@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { calculateCurrencies } from "../../helpers/calculateCurrencies";
-import { getDecimalFixedNumber } from "../../helpers/toFixed";
 import {
   addExpense,
   addIncome,
   calculateAccounts,
   calculateTotalRevenue,
 } from "../../store/features/budgets/monthsBudgetsSlice";
+import { CategoryItem } from "../../store/features/categories/categoriesSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import AddButton from "./ADDbutton";
-
 interface FormProps {
-  isIncome: Boolean;
+  isIncome: boolean;
 }
 
-function getCategoryIdByName(categoryName, categoryData) {
+function getCategoryIdByName(
+  categoryName: FormDataEntryValue,
+  categoryData: CategoryItem[]
+) {
   const categoryObj = categoryData.find((item) => categoryName === item.title);
   return categoryObj?.id;
 }
@@ -36,20 +38,22 @@ function SubmitForm({ isIncome }: FormProps) {
     setFormAmount("0");
   }, [month]);
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (month !== undefined) {
-      const form = e.target;
+      const form = e.currentTarget;
       const formData = new FormData(form);
       const formJson = Object.fromEntries(formData.entries());
-      const calculated = calculateCurrencies(formJson.amount, currency, rate);
+      const amount = Number(formJson.amount);
+      const calculated = calculateCurrencies(amount, currency, rate);
+      if (calculated === undefined) return;
       isIncome
         ? dispatch(
             addIncome({
               month: month.month,
-              RUBamount: getDecimalFixedNumber(calculated.RUB),
-              USDamount: getDecimalFixedNumber(calculated.USD),
-              EURamount: getDecimalFixedNumber(calculated.EUR),
+              RUBamount: calculated.RUB,
+              USDamount: calculated.USD,
+              EURamount: calculated.EUR,
               categoryId: getCategoryIdByName(
                 formJson.category,
                 incomeCategories
@@ -60,9 +64,9 @@ function SubmitForm({ isIncome }: FormProps) {
         : dispatch(
             addExpense({
               month: month.month,
-              RUBamount: getDecimalFixedNumber(calculated.RUB),
-              USDamount: getDecimalFixedNumber(calculated.USD),
-              EURamount: getDecimalFixedNumber(calculated.EUR),
+              RUBamount: calculated.RUB,
+              USDamount: calculated.USD,
+              EURamount: calculated.EUR,
               categoryId: getCategoryIdByName(
                 formJson.category,
                 expensesCategories
@@ -96,7 +100,7 @@ function SubmitForm({ isIncome }: FormProps) {
           type="number"
           value={formAmount}
           onClick={(e) => {
-            if (e.target.value === "0") setFormAmount("");
+            if (e.currentTarget.value === "0") setFormAmount("");
           }}
           onChange={(e) => {
             setFormAmount(e.target.value);

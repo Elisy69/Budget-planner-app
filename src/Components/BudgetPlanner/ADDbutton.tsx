@@ -5,7 +5,7 @@ interface ButtonProps {
 function AddButton({ isIncome }: ButtonProps) {
   return (
     <button
-      type="submut"
+      type="submit"
       className={`${
         isIncome
           ? `bg-green-950  hover:bg-green-800 active:bg-green-700`

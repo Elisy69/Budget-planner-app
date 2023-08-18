@@ -1,10 +1,13 @@
-import { MonthType } from "../../../types/types";
-import { getDecimalFixedNumber } from "../helpers/toFixed";
+import { MonthType } from "../store/features/budgets/monthsBudgetsSlice";
+import { Currencies } from "../store/features/currencies/currenciesSlice";
+
 type Total = {
   RUB: number;
   USD: number;
   EUR: number;
 };
+
+type TotalKeys = keyof Total;
 
 function getAccountedMonths(months: MonthType[]) {
   let [monthsWithIncome, monthsWithExpenses] = [0, 0];
@@ -30,10 +33,12 @@ function getTotalNetIncome(months: MonthType[]) {
 }
 
 function getMonthlyNetIncome(totalNetIncome: Total, accountedMonths: number) {
+  if (accountedMonths === 0) return { RUB: 0, EUR: 0, USD: 0 };
   const monthlyNetIncome = { ...totalNetIncome };
   for (let currency in monthlyNetIncome) {
-    monthlyNetIncome[currency] = Number(
-      getDecimalFixedNumber(monthlyNetIncome[currency] / accountedMonths)
+    const typedCurrency = currency as TotalKeys;
+    monthlyNetIncome[typedCurrency] = Number(
+      monthlyNetIncome[typedCurrency] / accountedMonths
     );
   }
   return monthlyNetIncome;

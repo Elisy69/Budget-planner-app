@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   addNewExpensesCategory,
   addNewIncomeCategory,
@@ -13,7 +13,7 @@ function AddCategpryForm({ isIncome }: AddCategpryFormProps) {
   const [newCategory, setNewCategory] = useState("");
   const dispatch = useAppDispatch();
 
-  function handleAddCategory(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleAddCategory(e: React.FormEvent<HTMLButtonElement>) {
     e.preventDefault();
     isIncome
       ? dispatch(addNewIncomeCategory(newCategory))

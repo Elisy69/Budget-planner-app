@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export type Currencies = "₽" | "$" | "€";
 interface Currency {
-  currentCurrency: string;
+  currentCurrency: Currencies;
   rate: { USD: number; EUR: number };
 }
 
@@ -10,7 +11,7 @@ const initialState: Currency = {
   rate: { USD: 0, EUR: 0 },
 };
 
-function nextCurrency(currentCurrency: string): string {
+function nextCurrency(currentCurrency: Currencies): Currencies {
   switch (currentCurrency) {
     case "₽":
       return "$";
@@ -18,14 +19,12 @@ function nextCurrency(currentCurrency: string): string {
       return "€";
     case "€":
       return "₽";
-    default:
-      return "error";
   }
 }
 
 const currenciesSlice = createSlice({
   name: "currencies",
-  initialState,
+  initialState: initialState,
   reducers: {
     loadRates(state, action) {
       return {

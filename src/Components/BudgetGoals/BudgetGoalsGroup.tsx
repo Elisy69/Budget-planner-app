@@ -1,22 +1,17 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { getCategoryTotalBasedOnCurrency } from "../../helpers/getTotalBasedOnCurrency";
 import { removeGoalGroup } from "../../store/features/budgetGoals/budgetGoalsSlice";
+import { Total } from "../../store/features/budgets/monthsBudgetsSlice";
 import { updateNetIncome } from "../../store/features/categories/categoriesSlice";
 import { useAppSelector } from "../../store/hooks";
 import GroupItem from "./GroupItem";
-import { getCategoryTotalBasedOnCurrency } from "/src/helpers/getTotalBasedOnCurrency.ts";
 
-type Total = {
-  RUB: number;
-  USD: number;
-  EUR: number;
-};
 type Goal = {
   title: string;
   amount: Total;
 };
-
 interface GoalGroup {
   id: string;
   items: Goal[];
@@ -40,7 +35,7 @@ function renderVerticalLine() {
   return <div className="border border-gray-600 "></div>;
 }
 
-function getMonthsToReachGoals(budgetGroupTotal, netIncomeData) {
+function getMonthsToReachGoals(budgetGroupTotal: Total, netIncomeData: Total) {
   return (budgetGroupTotal.RUB / netIncomeData.RUB).toFixed(1);
 }
 
@@ -49,7 +44,7 @@ function BudgetGoalGroup({ items, id, index }: GoalGroup) {
   const currency = useAppSelector((state) => state.currency.currentCurrency);
   const netIncomeData = useAppSelector((state) => state.categories.netIncome);
   const [budgetGroupTotal, setBudgetGroupTotal] = useState<Total>();
-  const [monthsToReachGoals, setMonthsToReachGoals] = useState<number>();
+  const [monthsToReachGoals, setMonthsToReachGoals] = useState<string>();
   const dispatch = useDispatch();
 
   useEffect(() => {

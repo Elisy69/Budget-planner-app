@@ -1,6 +1,38 @@
-import { PayloadAction, createSlice, current, nanoid } from "@reduxjs/toolkit";
-import { getDecimalFixedNumber } from "../../../helpers/toFixed";
-import { MonthType } from "../../../types/types";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
+
+interface RemoveBudgetItemPayload {
+  id: string;
+  budgetType: "income" | "expenses";
+  monthIndex: number;
+}
+
+export interface BudgetItemType {
+  id: string;
+  RUBamount: number;
+  USDamount: number;
+  EURamount: number;
+  categoryId: string;
+  commentary: string;
+}
+
+export interface Total {
+  RUB: number;
+  USD: number;
+  EUR: number;
+}
+
+export interface MonthType {
+  month: number;
+  income: BudgetItemType[];
+  expenses: BudgetItemType[];
+  active: boolean;
+  total: {
+    expenses: Total;
+    income: Total;
+    totalMonth: Total;
+  };
+}
+
 const months: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 function getMonths(): MonthType[] {
@@ -12,7 +44,11 @@ function getMonths(): MonthType[] {
         income: [],
         expenses: [],
         active: false,
-        total: 0,
+        total: {
+          expenses: { RUB: 0, USD: 0, EUR: 0 },
+          income: { RUB: 0, USD: 0, EUR: 0 },
+          totalMonth: { RUB: 0, USD: 0, EUR: 0 },
+        },
       },
     ];
   }, []);
@@ -25,9 +61,10 @@ const monthsBudgetsSlice = createSlice({
   initialState,
   reducers: {
     removeBudgetItem(state, action) {
-      const { monthIndex, budgetType, id } = action.payload;
+      const { monthIndex, budgetType, id } =
+        action.payload as RemoveBudgetItemPayload;
       const updatedBudgetType = state[monthIndex][budgetType].filter(
-        (item) => item.id !== id
+        (item: BudgetItemType) => item.id !== id
       );
       const updatedMonth = {
         ...state[monthIndex],
@@ -52,8 +89,6 @@ const monthsBudgetsSlice = createSlice({
     },
     addIncome(state, action) {
       const monthIndex = action.payload.month - 1;
-      console.log(action.payload.categoryId);
-
       const updatedMonth = {
         ...state[monthIndex],
         income: [
@@ -96,6 +131,7 @@ const monthsBudgetsSlice = createSlice({
       const monthIndex = action.payload.month - 1;
       const monthIncome = state[monthIndex].income;
       const monthExpenses = state[monthIndex].expenses;
+      const totalMonth = state[monthIndex].total.totalMonth;
       const income = monthIncome.reduce(
         (total, item) => {
           return {
@@ -119,7 +155,7 @@ const monthsBudgetsSlice = createSlice({
       );
       const updatedMonth = {
         ...state[monthIndex],
-        total: { income, expenses },
+        total: { income, expenses, totalMonth },
       };
       const updatedState = [...state];
       updatedState[monthIndex] = updatedMonth;
@@ -131,9 +167,9 @@ const monthsBudgetsSlice = createSlice({
       const expenses = state[monthIndex].total.expenses;
 
       const totalMonth = {
-        RUB: getDecimalFixedNumber(income.RUB - expenses.RUB),
-        USD: getDecimalFixedNumber(income.USD - expenses.USD),
-        EUR: getDecimalFixedNumber(income.EUR - expenses.EUR),
+        RUB: income.RUB - expenses.RUB,
+        USD: income.USD - expenses.USD,
+        EUR: income.EUR - expenses.EUR,
       };
 
       const updatedMonth = {
