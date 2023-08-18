@@ -11,8 +11,19 @@ export interface Categories {
   netIncome: Total;
 }
 
-const myIncome: string[] = [];
-const myExpenses: string[] = [];
+const myIncome: string[] = [
+  "Salary",
+  "Passive income",
+  "Sold car",
+  "Wife salary",
+];
+const myExpenses: string[] = [
+  "Rent",
+  "Interest payment",
+  "Food",
+  "Travel",
+  "Bought Macbook",
+];
 
 const income: CategoryItem[] = myIncome.map((item) => ({
   title: item,
