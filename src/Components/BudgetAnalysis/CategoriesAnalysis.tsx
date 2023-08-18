@@ -12,11 +12,10 @@ export interface FilteredBudgetItem {
   USD: number;
   EUR: number;
   categoryId: string;
-  commentary: string;
 }
 
 interface CategoriesAnalysisProps {
-  type: string;
+  type: "income" | "expenses";
   isIncome: boolean;
 }
 interface CategoryItem {
