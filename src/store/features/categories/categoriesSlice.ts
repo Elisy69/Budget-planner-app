@@ -1,6 +1,8 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { MOCK_DATA } from "../../../constants/MOCK_DATA";
 import { getNetIncome } from "../../../helpers/getNetIncome";
 import { Total } from "../budgets/monthsBudgetsSlice";
+
 export interface CategoryItem {
   title: string;
   id: string;
@@ -11,19 +13,8 @@ export interface Categories {
   netIncome: Total;
 }
 
-const myIncome: string[] = [
-  "Salary",
-  "Passive income",
-  "Sold car",
-  "Wife salary",
-];
-const myExpenses: string[] = [
-  "Rent",
-  "Interest payment",
-  "Food",
-  "Travel",
-  "Bought Macbook",
-];
+const myIncome: string[] = [];
+const myExpenses: string[] = [];
 
 const income: CategoryItem[] = myIncome.map((item) => ({
   title: item,
@@ -97,6 +88,9 @@ const categoriesSlice = createSlice({
         netIncome: getNetIncome(action.payload.months),
       };
     },
+    addMockCategories() {
+      return MOCK_DATA.CATEGORIES;
+    },
   },
 });
 
@@ -107,5 +101,6 @@ export const {
   onChangeExpensesCategories,
   deleteCategory,
   updateNetIncome,
+  addMockCategories,
 } = categoriesSlice.actions;
 export default categoriesSlice.reducer;

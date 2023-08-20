@@ -1,4 +1,5 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { MOCK_DATA } from "../../../constants/MOCK_DATA";
 
 type Total = {
   RUB: number;
@@ -33,9 +34,13 @@ const budgetGoalsSlice = createSlice({
       );
       return updState;
     },
+    loadMockDataGoals() {
+      return JSON.parse(MOCK_DATA.GOALS);
+    },
   },
 });
 
-export const { addGoalsGroup, removeGoalGroup } = budgetGoalsSlice.actions;
+export const { addGoalsGroup, removeGoalGroup, loadMockDataGoals } =
+  budgetGoalsSlice.actions;
 
 export default budgetGoalsSlice.reducer;

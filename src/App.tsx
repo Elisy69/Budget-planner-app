@@ -5,10 +5,15 @@ import { useGetRatesQuery } from "./api/currenciesApi";
 import BudgetAnalysis from "./pages/BudgetAnalysis";
 import BudgetGoals from "./pages/BudgetGoals";
 import BudgetPlanner from "./pages/BudgetPlanner";
+import { loadMockDataGoals } from "./store/features/budgetGoals/budgetGoalsSlice";
+import { loadMockDataBudgets } from "./store/features/budgets/monthsBudgetsSlice";
+import { addMockCategories } from "./store/features/categories/categoriesSlice";
 import { loadRates } from "./store/features/currencies/currenciesSlice";
-import { useAppDispatch } from "./store/hooks";
+import { switchMockDataLoaded } from "./store/features/mockData/mockDataSlice";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
 
 function App() {
+  const isMockDataLoaded = useAppSelector((state) => state.isMockDataLoaded);
   const { data } = useGetRatesQuery();
   const dispatch = useAppDispatch();
 
@@ -17,6 +22,16 @@ function App() {
       dispatch(loadRates({ USD: data.data.USD, EUR: data.data.EUR }));
     }
   }, [data, dispatch]);
+
+  useEffect(() => {
+    isMockDataLoaded ? "" : dispatch(addMockCategories());
+    dispatch(loadMockDataBudgets());
+    dispatch(loadMockDataGoals());
+  }, []);
+
+  useEffect(() => {
+    dispatch(switchMockDataLoaded());
+  }, [isMockDataLoaded]);
 
   return (
     <div className="w-full flex flex-col font-mono overflow-scroll bg-black">

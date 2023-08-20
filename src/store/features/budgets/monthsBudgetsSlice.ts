@@ -1,4 +1,5 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { MOCK_DATA } from "../../../constants/MOCK_DATA";
 
 interface RemoveBudgetItemPayload {
   id: string;
@@ -206,6 +207,9 @@ const monthsBudgetsSlice = createSlice({
 
       return updatedState;
     },
+    loadMockDataBudgets() {
+      return JSON.parse(MOCK_DATA.BUDGETS);
+    },
   },
 });
 
@@ -218,6 +222,7 @@ export const {
   calculateTotalRevenue,
   select,
   unselect,
+  loadMockDataBudgets,
 } = monthsBudgetsSlice.actions;
 
 export default monthsBudgetsSlice.reducer;

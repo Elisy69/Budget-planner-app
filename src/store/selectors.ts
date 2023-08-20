@@ -6,7 +6,6 @@ type Type = "income" | "expenses";
 export const selectBudgetItemsWithCategory = createSelector(
   [(state) => state.budgets, (state, type: Type) => type],
   (budgets: MonthType[], type) => {
-    console.log(budgets, type);
     return budgets
       .filter((month) => month[type].length !== 0)
       .map((item) => ({ [type]: item[type] }))

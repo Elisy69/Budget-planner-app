@@ -16,12 +16,14 @@ import budgetGoalsReducer from "./features/budgetGoals/budgetGoalsSlice";
 import monthsBudgetReducer from "./features/budgets/monthsBudgetsSlice";
 import categoriesReducer from "./features/categories/categoriesSlice";
 import currencyReducer from "./features/currencies/currenciesSlice";
+import mockDataReducer from "./features/mockData/mockDataSlice";
 
 const rootReducer = combineReducers({
   budgets: monthsBudgetReducer,
   categories: categoriesReducer,
   currency: currencyReducer,
   budgetGoals: budgetGoalsReducer,
+  isMockDataLoaded: mockDataReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
