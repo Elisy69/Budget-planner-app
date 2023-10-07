@@ -68,21 +68,21 @@ function BudgetSheet({ isIncome }: BudgetSheetProps) {
         isIncome ? `text-green-500` : `text-red-500`
       } w-full sm:w-[80%]  md:w-[70%] lg:w-[60%] xl:w-[50%] self-center mb-4`}
     >
-      <div className="flex justify-end">
-        <div
-          className="tooltip tooltip-left"
-          data-tip="copy to next month"
-          onClick={handleCopyToNextMonth}
-        >
-          <button className="transition hover:-translate-y-0.5 hover:scale-200 duration-250">
-            💾
-          </button>
-        </div>
-      </div>
-      <h1 className="flex">
+      <h1 className="flex justify-between">
         <span className="text-2xl md:text-3xl lg:text-4xl">
           {isIncome ? "Income" : "Expenses"}
         </span>
+        <div className="flex flex-col justify-end pb-0.5">
+          <div
+            className="tooltip"
+            data-tip="Copy to next month"
+            onClick={handleCopyToNextMonth}
+          >
+            <button className="transition hover:-translate-y-0.5 hover:scale-200 duration-250 text-xl">
+              💾
+            </button>
+          </div>
+        </div>
       </h1>
       <div className="border-b border-gray-600 w-full"></div>
       <nav className="mt-2 flex text-gray-400 mb-2 place-content-between text-xs sm:text-base">
