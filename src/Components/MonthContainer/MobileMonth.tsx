@@ -12,7 +12,6 @@ interface MonthProps {
 }
 function MobileMonth({ data, isActive, onSelect, unSelect }: MonthProps) {
   const currency = useAppSelector((state) => state.currency.currentCurrency);
-
   const getColor = () => {
     const totalSum = data.total.totalMonth.RUB;
     if (totalSum === 0) return "badge-neutral-content";
